@@ -9,4 +9,4 @@ https://github.com/hdjm01/WeatherNode
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
-- Implement WifiManager
+01.07.22 Implement https://github.com/hdjm01/WeatherNode/issues/3
