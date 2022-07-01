@@ -6,6 +6,13 @@ char* NAME = "WeatherNode";
 
 ESP8266WebServer server(80);
 
+void handleJson(){
+    String json = "{\n"; 
+    json += " \"name\" : \"WeatherNode\" ";     
+    json += "\n}";    
+    server.send(200, "application/json", json);
+}
+
 void handleNotFound() {
   String message = NAME;
   message += "\nError: 404\nFile Not Found\n\n";
@@ -46,6 +53,7 @@ void setup() {
   server.on("/", []() {
     server.send(200, "text/plain", NAME);
   });
+  server.on("/json", handleJson);
   server.onNotFound(handleNotFound);
   Serial.println("start Webserver");
   server.begin();
