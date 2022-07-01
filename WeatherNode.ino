@@ -5,6 +5,9 @@
 #define sda D2
 #define scl D1
 
+String inputString = "";    
+bool stringComplete = false;
+
 BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
 BME280::PresUnit presUnit(BME280::PresUnit_Pa);
 
@@ -24,7 +27,7 @@ BME280I2C bme(settings);
 float temp(NAN), hum(NAN), pres(NAN);
 int   maxTryBME        = 10;       // Maximale Versuche für die Verbindung zum BM[E|P]
 long  timeSinceLastBM  = 0;
-int   BM_DURATION      = 5000;     // Abstand zwischen Messungen am Sensor in ms
+int   BM_DURATION      = 3000;     // Abstand zwischen Messungen am Sensor in ms
 
 void  printBME280(void) {
     String json = "{ ";
@@ -74,7 +77,7 @@ void  printBME280(void) {
 }
 
 void setup() {
-
+  inputString.reserve(200);
   Serial.begin(115200);
   Serial.println("\nWeatherNode");
 
@@ -102,9 +105,51 @@ void setup() {
 }
 
 void loop() {
+
+  if (stringComplete) {
+    Serial.print("#");
+    Serial.print(inputString);
+    Serial.println("#");
+    
+    if(inputString == "BME280"){
+        printBME280();
+    }else if(inputString == "SENSORS"){
+        printBME280();     
+    }else{
+        Serial.println("\n# WeatherNode");
+        Serial.println("## Commands");
+        Serial.println("   BME280");
+        Serial.println("   SENSORS");
+        Serial.println("   https://github.com/hdjm01/WeatherNode/wiki ");
+    }    
+    inputString = "";
+    stringComplete = false;
+  }
+  
   if (timeSinceLastBM == 0 || (millis() - timeSinceLastBM > BM_DURATION)) {
     timeSinceLastBM = millis();
     bme.read(pres, temp, hum, tempUnit, presUnit);
-    printBME280();
+  }
+}
+
+/*
+  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
+  routine is run between each time loop() runs, so using delay inside loop can
+  delay response. Multiple bytes of data may be available.
+*/
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    if (inChar == '\n') {
+      // if the incoming character is a newline, set a flag
+      stringComplete = true;
+    }else if(inChar == '\r'){
+      // remove
+    }else{
+      // add it to the inputString:
+      inputString += inChar;
+    }
   }
 }
