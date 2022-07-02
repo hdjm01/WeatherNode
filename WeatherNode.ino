@@ -33,10 +33,9 @@ void  printBME280(void) {
     String json = "{ ";
     json += "\"name\": \"WeatherNode\", ";
     
-    json += " {";
-    json += " \"name\": \"BME280\"";
-    
-    json += ", \"Temperatur\":";
+    json += " \"BME280\" : {";
+        
+    json += " \"Temperatur\":";
     
     json += " { ";
     
