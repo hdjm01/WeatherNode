@@ -106,9 +106,11 @@ void setup() {
 void loop() {
 
   if (stringComplete) {
+    /*
     Serial.print("#");
     Serial.print(inputString);
     Serial.println("#");
+    */
     
     if(inputString == "BME280"){
         printBME280();
