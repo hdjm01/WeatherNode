@@ -15,8 +15,13 @@ Get Data of BME280 Sensor on Serial or via Http as JSON.
 Setup
 ----------------------------------------------------------------------------
 
+### WiFi
+
 Since implementation of WiFiManager the Device starts with an Access Point "WeatherNode" and keyword "setupkw39"
 
+### MQTT
+
+Static Server
 
 Serial
 ----------------------------------------------------------------------------
@@ -49,7 +54,21 @@ Example
     		}
     	}
     }
-	
+
+MQTT
+-----------------------------------------------------------------------------
+
+    /WeatherNode/[ID]/BME280/
+		./Temperatur
+			./value
+			./unit
+    	./Luftfeuchte
+			./value
+			./unit
+    	./Luftdruck
+			./value
+			./unit
+
 
 Http
 -----------------------------------------------------------------------------
@@ -61,6 +80,7 @@ Returns JSON with current data
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
+* 05.07.22	MQTT https://github.com/hdjm01/WeatherNode/issues/15
 * 01.07.22	BME280 https://github.com/hdjm01/WeatherNode/issues/3
 * 01.07.22	JSON https://github.com/hdjm01/WeatherNode/issues/1
 * 30.06.22	Webserver https://github.com/hdjm01/WeatherNode/issues/4
