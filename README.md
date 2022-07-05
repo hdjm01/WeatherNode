@@ -6,6 +6,18 @@ Environment Parameter Device (Temp, ...)
 https://github.com/hdjm01/WeatherNode
 
 
+Usage
+----------------------------------------------------------------------------
+
+Get Data of BME280 Sensor on Serial or via Http as JSON.
+
+
+Setup
+----------------------------------------------------------------------------
+
+Since implementation of WiFiManager the Device starts with an Access Point "WeatherNode" and keyword "setupkw39"
+
+
 Serial
 ----------------------------------------------------------------------------
 
