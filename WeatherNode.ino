@@ -1,9 +1,13 @@
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h>
 #include <BME280.h>
 #include <BME280I2C.h>
 #include <Wire.h>
 
-#define sda D2
-#define scl D1
+#define sda D1
+#define scl D2
 
 String inputString = "";    
 bool stringComplete = false;
@@ -22,14 +26,18 @@ BME280I2C::Settings settings(
    BME280I2C::I2CAddr_0x77 // I2C address. I2C specific.
 );
 
-BME280I2C bme(settings);
-
 float temp(NAN), hum(NAN), pres(NAN);
-int   maxTryBME        = 10;       // Maximale Versuche für die Verbindung zum BM[E|P]
+int   maxTryBME        = 10;       // Maximale Versuche f�r die Verbindung zum BM[E|P]
 long  timeSinceLastBM  = 0;
 int   BM_DURATION      = 3000;     // Abstand zwischen Messungen am Sensor in ms
 
-void  printBME280(void) {
+char* NAME = "WeatherNode";
+
+WiFiManager wm;
+ESP8266WebServer server(80);
+BME280I2C bme(settings);
+
+String getBME280(void) {
     String json = "{ ";
     json += "\"name\": \"WeatherNode\", ";
     
@@ -72,10 +80,41 @@ void  printBME280(void) {
     json += " }";    
     
     json += " }";
-    Serial.println(json);
+    return json;
 }
 
+void handleJson(){
+    server.send(200, "application/json", getBME280());
+}
+
+void handleNotFound() {
+  String message = NAME;
+  message += "\nError: 404\nFile Not Found\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+
+  for (uint8_t i = 0; i < server.args(); i++) {
+    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+  }
+
+  server.send(404, "text/plain", message);
+}
+
+
 void setup() {
+
+  bool res = wm.autoConnect("WeatherNode","setupkw39");
+
+  if(!res) 
+    Serial.println("Failed to connect");
+  else 
+    Serial.println("connected...yeey :)");
+  
   inputString.reserve(200);
   Serial.begin(115200);
   Serial.println("\nWeatherNode");
@@ -100,11 +139,22 @@ void setup() {
     default:
       Serial.println("Found UNKNOWN sensor! Error!");
   }
+
+  // Webserver
+
+  server.on("/", []() {
+    server.send(200, "text/plain", NAME);
+  });
+  server.on("/json", handleJson);
+  server.onNotFound(handleNotFound);
+  Serial.println("start Webserver");
+  server.begin();
   
+  Serial.println("Setup Done");
 }
 
 void loop() {
-
+  server.handleClient();
   if (stringComplete) {
     /*
     Serial.print("#");
@@ -113,9 +163,9 @@ void loop() {
     */
     
     if(inputString == "BME280"){
-        printBME280();
+        Serial.println(getBME280());
     }else if(inputString == "SENSORS"){
-        printBME280();     
+        Serial.println(getBME280());
     }else{
         Serial.println("\n# WeatherNode");
         Serial.println("## Commands");
@@ -125,13 +175,15 @@ void loop() {
     }    
     inputString = "";
     stringComplete = false;
-  }
-  
+  }  
   if (timeSinceLastBM == 0 || (millis() - timeSinceLastBM > BM_DURATION)) {
     timeSinceLastBM = millis();
     bme.read(pres, temp, hum, tempUnit, presUnit);
   }
+
+  
 }
+
 
 /*
   SerialEvent occurs whenever a new data comes in the hardware serial RX. This
