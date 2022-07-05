@@ -33,7 +33,7 @@ int   BM_DURATION      = 3000;     // Abstand zwischen Messungen am Sensor in ms
 
 char* NAME = "WeatherNode";
 
-WiFiManager wm;
+
 ESP8266WebServer server(80);
 BME280I2C bme(settings);
 
@@ -107,7 +107,8 @@ void handleNotFound() {
 
 
 void setup() {
-
+  WiFi.mode(WIFI_STA); 
+  WiFiManager wm;
   bool res = wm.autoConnect("WeatherNode","setupkw39");
 
   if(!res) 
@@ -155,12 +156,9 @@ void setup() {
 
 void loop() {
   server.handleClient();
+
+  // Serial Input/Response
   if (stringComplete) {
-    /*
-    Serial.print("#");
-    Serial.print(inputString);
-    Serial.println("#");
-    */
     
     if(inputString == "BME280"){
         Serial.println(getBME280());
@@ -173,14 +171,16 @@ void loop() {
         Serial.println("   SENSORS");
         Serial.println("   https://github.com/hdjm01/WeatherNode/wiki ");
     }    
+    
     inputString = "";
     stringComplete = false;
   }  
+
+  // Read Sensor
   if (timeSinceLastBM == 0 || (millis() - timeSinceLastBM > BM_DURATION)) {
     timeSinceLastBM = millis();
     bme.read(pres, temp, hum, tempUnit, presUnit);
   }
-
   
 }
 
