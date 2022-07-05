@@ -6,8 +6,8 @@
 #include <BME280I2C.h>
 #include <Wire.h>
 
-#define sda D1
-#define scl D2
+#define sda D2
+#define scl D1
 
 String inputString = "";    
 bool stringComplete = false;
