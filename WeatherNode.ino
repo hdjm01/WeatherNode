@@ -101,6 +101,20 @@ void handleJson(){
     server.send(200, "application/json", getBME280());
 }
 
+void handleRoot(){
+  String content = "<html>"
+
+  "<head><title>WeatherNode</title><head>"
+  
+  "<body>"
+  "<h1>WeatherNode</h1>"
+  "<p><a href='https://github.com/hdjm01/WeatherNode'>Project on Github.com</a></p>"
+  "</body>"
+  "</html>";
+  
+  server.send(200, "text/html", content);
+}
+
 
 void handleNotFound() {
   String message = NAME;
@@ -179,9 +193,7 @@ void setup() {
 
   // Webserver
 
-  server.on("/", []() {
-    server.send(200, "text/plain", NAME);
-  });
+  server.on("/", handleRoot);
   server.on("/json", handleJson);
   server.onNotFound(handleNotFound);
   Serial.println("start Webserver");

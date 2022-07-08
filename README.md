@@ -1,3 +1,4 @@
+
 WeatherNode
 =============================================================================
 
@@ -19,9 +20,14 @@ Setup
 
 Since implementation of WiFiManager the Device starts with an Access Point "WeatherNode" and keyword "setupkw39"
 
+Open http://192.168.4.1 an setup your WiFi.
+
 ### MQTT
 
 Static Server
+
+ToDo: https://github.com/hdjm01/WeatherNode/issues/25
+
 
 Serial
 ----------------------------------------------------------------------------
@@ -55,6 +61,7 @@ Example
     	}
     }
 
+
 MQTT
 -----------------------------------------------------------------------------
 
@@ -80,6 +87,7 @@ Returns JSON with current data
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
+* 09.07.22  Start Page https://github.com/hdjm01/WeatherNode/issues/17
 * 05.07.22	MQTT https://github.com/hdjm01/WeatherNode/issues/15
 * 01.07.22	BME280 https://github.com/hdjm01/WeatherNode/issues/3
 * 01.07.22	JSON https://github.com/hdjm01/WeatherNode/issues/1
