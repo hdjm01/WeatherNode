@@ -62,6 +62,9 @@ String getBME280(void) {
     String json = "{ ";
     // Node root
     json += "\"name\": \"WeatherNode\", ";
+    json += "\"id\": \"";
+    json += ESP.getChipId();
+    json += "\", ";
 
     // root/Sensor
     json += " \"BME280\" : {";
@@ -157,18 +160,19 @@ void  publischBME280(void) {
 
 
 void setup() {
+  inputString.reserve(200);
+  Serial.begin(115200);
+
+  Serial.println("\nWeatherNode");
+  
   WiFi.mode(WIFI_STA); 
   WiFiManager wm;
   bool res = wm.autoConnect("WeatherNode","setupkw39");
 
   if(!res) 
     Serial.println("Failed to connect");
-  else 
+  else
     Serial.println("connected...yeey :)");
-  
-  inputString.reserve(200);
-  Serial.begin(115200);
-  Serial.println("\nWeatherNode");
 
   Wire.begin(sda,scl);
   int i = 0;
