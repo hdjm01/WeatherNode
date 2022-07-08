@@ -87,9 +87,12 @@ Returns JSON with current data
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
-* 09.07.22  Start Page https://github.com/hdjm01/WeatherNode/issues/17
-* 05.07.22	MQTT https://github.com/hdjm01/WeatherNode/issues/15
-* 01.07.22	BME280 https://github.com/hdjm01/WeatherNode/issues/3
-* 01.07.22	JSON https://github.com/hdjm01/WeatherNode/issues/1
-* 30.06.22	Webserver https://github.com/hdjm01/WeatherNode/issues/4
-* 30.06.22 	WifiManager https://github.com/hdjm01/WeatherNode/issues/2
+* 09.07.22  IP ausgeben - https://github.com/hdjm01/WeatherNode/issues/24
+* 09.07.22  Chip ID in JSON - https://github.com/hdjm01/WeatherNode/issues/23
+* 09.07.22  Fix JSON value - https://github.com/hdjm01/WeatherNode/issues/30
+* 09.07.22  Start Page - https://github.com/hdjm01/WeatherNode/issues/17
+* 05.07.22	MQTT - https://github.com/hdjm01/WeatherNode/issues/15
+* 01.07.22	BME280 - https://github.com/hdjm01/WeatherNode/issues/3
+* 01.07.22	JSON - https://github.com/hdjm01/WeatherNode/issues/1
+* 30.06.22	Webserver - https://github.com/hdjm01/WeatherNode/issues/4
+* 30.06.22 	WifiManager - https://github.com/hdjm01/WeatherNode/issues/2
