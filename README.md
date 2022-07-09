@@ -75,7 +75,7 @@ MQTT
     	./Luftdruck
 			./value
 			./unit
-
+		./data/[json]
 
 Http
 -----------------------------------------------------------------------------
@@ -87,6 +87,7 @@ Returns JSON with current data
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
+* 09.07.22  JSON an MQTT - https://github.com/hdjm01/WeatherNode/issues/27
 * 09.07.22  Link WifiManager - https://github.com/hdjm01/WeatherNode/issues/28
 * 09.07.22  IP ausgeben - https://github.com/hdjm01/WeatherNode/issues/24
 * 09.07.22  Chip ID in JSON - https://github.com/hdjm01/WeatherNode/issues/23
