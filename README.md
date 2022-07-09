@@ -18,7 +18,7 @@ Setup
 
 ### WiFi
 
-Since implementation of WiFiManager the Device starts with an Access Point "WeatherNode" and keyword "setupkw39"
+Since implementation of [WiFiManager](https://github.com/tzapu/WiFiManager) the Device starts with an Access Point "WeatherNode" and keyword "setupkw39"
 
 Open http://192.168.4.1 an setup your WiFi.
 
@@ -87,6 +87,7 @@ Returns JSON with current data
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
+* 09.07.22  Link WifiManager - https://github.com/hdjm01/WeatherNode/issues/28
 * 09.07.22  IP ausgeben - https://github.com/hdjm01/WeatherNode/issues/24
 * 09.07.22  Chip ID in JSON - https://github.com/hdjm01/WeatherNode/issues/23
 * 09.07.22  Fix JSON value - https://github.com/hdjm01/WeatherNode/issues/30
