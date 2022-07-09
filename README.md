@@ -92,6 +92,7 @@ ReleaseNotes/RevHistory
 1.0.2
 
 * Geschützter Bereich - https://github.com/hdjm01/WeatherNode/issues/41
+* Zugangsdaten - https://github.com/hdjm01/WeatherNode/issues/37
 
 1.0.1
 
