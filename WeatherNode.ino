@@ -145,17 +145,20 @@ void  publischBME280(void) {
     static char outstr[15];
     char topic[80];
     
-    sprintf(topic,"/ESP-%06X/%s",chipid,"temp");
+    sprintf(topic,"/WeaterNode/ESP-%06X/temp",chipid);
     dtostrf(temp,7, 1, outstr);
     mqtt_client.publish(topic, outstr);
 
-    sprintf(topic,"/ESP-%06X/%s",chipid,"hum");
+    sprintf(topic,"/WeaterNode/ESP-%06X/hum",chipid);
     dtostrf(hum,7, 0, outstr);
     mqtt_client.publish(topic, outstr);
     
-    sprintf(topic,"/ESP-%06X/%s",chipid,"pres");
+    sprintf(topic,"/WeaterNode/ESP-%06X/pres",chipid);
     dtostrf(pres / 100,7, 1, outstr);
     mqtt_client.publish(topic, outstr);    
+
+    sprintf(topic,"/WeaterNode/ESP-%06X/data",chipid);
+    mqtt_client.publish(topic, getBME280().c_str());    
 }
 
 
