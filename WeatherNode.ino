@@ -13,7 +13,7 @@
 String inputString = "";    
 bool stringComplete = false;
 
-const char* version = "1.0.1";
+const char* version = "1.0.2";
 
 BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
 BME280::PresUnit presUnit(BME280::PresUnit_Pa);
@@ -64,7 +64,11 @@ uint32_t      chipid;
 ESP8266HTTPUpdateServer httpUpdater;
 const char* update_path = "/firmware";
 const char* update_username = "admin";
-const char* update_password = "admin";
+const char* update_password = "elefantenloeffel";
+
+// ConfigPage
+const char* www_username = "admin";
+const char* www_password = "katzenbrot";
 
 
 String getBME280(void) {
@@ -106,25 +110,121 @@ String getBME280(void) {
 }
 
 
+void handleConfig(){
+  if (!server.authenticate(www_username, www_password))
+      return server.requestAuthentication();
+
+  String content = "<html";
+  content += header();
+  content += "<body>";
+  content += title();
+
+  content += "<form>"
+  
+  "<p>"
+  "<label for='mqtt_host'>MQTT Host: </label>"
+  "<input type='text' id='mqtt_host' name='mqtt_host' value='";
+  content += mqtt_server;
+  content +="'/>"
+  "</p>"
+
+  "<p>"
+  "<label for='mqtt_port'>MQTT Port: </label>"
+  "<input type='text' id='mqtt_port' name='mqtt_port' value='";
+  content += mqtt_port;
+  content +="'/>"
+  "</p>"
+
+  "<p>Zugangsdaten für das Firmware Update</p>"
+
+  "<p>"
+  "<label for='update_user'>Update User: </label>"
+  "<input type='text' id='update_user' name='update_user' value='";
+  content += update_username;
+  content +="'/>"
+  "</p>"
+
+  "<p>"
+  "<label for='update_pw'>Update Password: </label>"
+  "<input type='text' id='update_pw' name='update_pw' />"
+  "</p>"
+
+  "<p>Zugangsdaten für die Konfiguration</p>"
+
+  "<p>"
+  "<label for='http_user'>Web User: </label>"
+  "<input type='text' id='http_user' name='http_user' value='";
+  content += www_username;
+  content +="'/>"
+  "</p>"
+
+  "<p>"
+  "<label for='http_pw'>Web Password: </label>"
+  "<input type='text' id='http_pw' name='http_pw' />"
+  "</p>"
+
+  "<p>I²C Setup</p>"
+  "<p>"
+  "<label for='i2c_scl'>Pin für scl: </label>"
+  "<input type='text' id='i2c_scl' name='i2c_scl' />"
+  "</p>"
+  "<p>"
+  "<label for='i2c_sda'>Pin für sda: </label>"
+  "<input type='text' id='i2c_sda' name='i2c_sda' />"
+  "</p>"
+
+  "<p>BME280 Setup</p>"
+  "<p>"
+  "<label for='bme280_adr'>Adresse: </label>"
+  "<input type='text' id='bme280_adr' name='bme280_adr' />"
+  "</p>"
+
+  "<input type='submit' value='Speichern'/>"
+  
+  "</form>";
+
+  content += projectLink();
+  
+  content += "</body>"
+  "</html>";
+      
+  server.send(200, "text/html", content);
+}
+
 void handleJson(){
     server.send(200, "application/json", getBME280());
 }
 
+String title(){
+  return "<h1>WeatherNode</h1>";
+}
+
+String header(){
+  return "<head><title>WeatherNode</title></head>";
+}
+
+String projectLink(){
+  return "<p style='font-size:8pt'><a href='https://github.com/hdjm01/WeatherNode' target='_blank'>Project Website</a></p>";
+}
+
 void handleRoot(){
-  String content = "<html>"
+  
+  String content = "<html>";
+  content += header();  
+  content += "<body>";
+  content += title();
 
-  "<head><title>WeatherNode</title><head>"
-  
-  "<body>"
-  
-  "<h1>WeatherNode</h1>"
-  
-  "<p><a href='https://github.com/hdjm01/WeatherNode'>Project on Github.com</a></p>"
+  content += "<ul>"
+  "<li><a href='/json'>JSON</a></li>"
+  "<li><a href='/config'>Config</a></li>"
+  "<li><a href='/firmware'>Update</a></li>"
+  "</ul>";
 
-  "<p>Version: ";
+  content += "<p>Version: ";
   content += version;
-  content += "</p>"
-  
+  content += "</p>"  
+
+  content += projectLink();
   
   "</body>"
   "</html>";
@@ -221,6 +321,7 @@ void setup() {
 
   server.on("/", handleRoot);
   server.on("/json", handleJson);
+  server.on("/config", handleConfig);
   server.onNotFound(handleNotFound);
   Serial.println("start Webserver");
   server.begin();

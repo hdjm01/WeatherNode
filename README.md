@@ -6,6 +6,8 @@ Environment Parameter Device (Temp, ...)
 
 https://github.com/hdjm01/WeatherNode
 
+Version: 1.0.2
+
 
 Usage
 ----------------------------------------------------------------------------
@@ -86,6 +88,10 @@ Returns JSON with current data
 
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
+
+1.0.2
+
+* Geschützter Bereich - https://github.com/hdjm01/WeatherNode/issues/41
 
 1.0.1
 
