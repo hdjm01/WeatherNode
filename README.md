@@ -87,6 +87,10 @@ Returns JSON with current data
 ReleaseNotes/RevHistory
 -----------------------------------------------------------------------------
 
+1.0.1
+
+* 09.07.22  Version - https://github.com/hdjm01/WeatherNode/issues/34
+* 09.07.22  Update - https://github.com/hdjm01/WeatherNode/issues/10
 * 09.07.22  JSON an MQTT - https://github.com/hdjm01/WeatherNode/issues/27
 * 09.07.22  Link WifiManager - https://github.com/hdjm01/WeatherNode/issues/28
 * 09.07.22  IP ausgeben - https://github.com/hdjm01/WeatherNode/issues/24

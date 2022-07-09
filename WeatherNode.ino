@@ -5,12 +5,15 @@
 #include <BME280I2C.h>
 #include <Wire.h>
 #include <PubSubClient.h>
+#include <ESP8266HTTPUpdateServer.h>
 
 #define sda D1
 #define scl D2
 
 String inputString = "";    
 bool stringComplete = false;
+
+const char* version = "1.0.1";
 
 BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
 BME280::PresUnit presUnit(BME280::PresUnit_Pa);
@@ -57,45 +60,48 @@ long          mqtt_lastpub = 0;
 char          clientid[25];
 uint32_t      chipid;
 
+// Update
+ESP8266HTTPUpdateServer httpUpdater;
+const char* update_path = "/firmware";
+const char* update_username = "admin";
+const char* update_password = "admin";
+
 
 String getBME280(void) {
-    String json = "{ ";
-    // Node root
-    json += "\"name\": \"WeatherNode\", ";
-    json += "\"id\": \"";
+    String json = "{ "
+    "\"name\" : \"WeatherNode\", "
+    
+    "\"id\" : \"";
     json += ESP.getChipId();
-    json += "\", ";
+    json += "\", "
 
-    // root/Sensor
-    json += " \"BME280\" : {";
+    "\"version\" : \"";
+    json += version;
+    json += "\", "
 
-    // root/sensor/temp/
-    json += " \"Temperatur\":";    
-    json += " { ";
+    " \"BME280\" : {"
+
+    " \"Temperatur\": { ";
     json += "\"value\" : \"" + String(temp) + "\"";
-    json += ", \"unit\" : ";
-    json += "\"°C\"";
-    json += " }";
+    json += ", \"unit\" : "
+    "\"°C\""
+    " }";
     
-    json += ", \"Luftfeuchte\":";    
-    json += " {";    
-    json += "\" value\" : ";
+    json += ", \"Luftfeuchte\" : { "
+    "\" value\" : ";
     json += "\"" + String(hum) + "\"";    
-    json += ", \"unit\" : ";
-    json += "\"%\"";    
-    json += " }";
+    json += ", \"unit\" : "
+    "\"%\""
+    " }"
     
-    json += ", \"Luftdruck\":";    
-    json += " {";    
-    json += " \"value\" : ";
+    ", \"Luftdruck\" : { "
+    " \"value\" : ";
     json += "\"" + String(pres / 100) + "\"";    
-    json += ", \"unit\" : ";
-    json += "\"hPa\"";    
-    json += " }";    
-    
-    json += " }";    
-    
-    json += " }";
+    json += ", \"unit\" : "
+    "\"hPa\""
+    " }"
+    " }"    
+    " }";
     return json;
 }
 
@@ -110,8 +116,16 @@ void handleRoot(){
   "<head><title>WeatherNode</title><head>"
   
   "<body>"
+  
   "<h1>WeatherNode</h1>"
+  
   "<p><a href='https://github.com/hdjm01/WeatherNode'>Project on Github.com</a></p>"
+
+  "<p>Version: ";
+  content += version;
+  content += "</p>"
+  
+  
   "</body>"
   "</html>";
   
@@ -166,7 +180,8 @@ void setup() {
   inputString.reserve(200);
   Serial.begin(115200);
 
-  Serial.println("\nWeatherNode");
+  Serial.println("\nWeatherNode\n");
+  Serial.printf("Version: %s \n", version);
   
   WiFi.mode(WIFI_STA); 
   WiFiManager wm;
@@ -197,6 +212,10 @@ void setup() {
     default:
       Serial.println("Found UNKNOWN sensor! Error!");
   }
+
+  // Updateserver
+  httpUpdater.setup(&server, update_path, update_username, update_password);
+  Serial.println("HTTPUpdateServer ready!");
 
   // Webserver
 
