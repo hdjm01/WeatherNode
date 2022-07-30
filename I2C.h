@@ -2,5 +2,5 @@
 
 #include <Wire.h>
 
-#define sda D2
-#define scl D1
+int sda = 4; // D2
+int scl = 5; // D1

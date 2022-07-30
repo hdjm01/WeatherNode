@@ -9,8 +9,8 @@ const char CSS[] PROGMEM = R"(
   }
   h1{
     background-color: #fafafa;
-    margin:0;
-    padding: 3px;
+    margin: 0px;
+    padding: 10px 8px;
   }
   h1 a{
     text-decoration:none;
@@ -31,7 +31,7 @@ const char CSS[] PROGMEM = R"(
     margin-inline-end: 0px;
     padding-inline-start: 0px;
     padding:2px;
-    background-color: #b3bdfb;
+    background-color: #dcf1e3ad;
   }
   
   form{

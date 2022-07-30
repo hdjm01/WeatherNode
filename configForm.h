@@ -3,8 +3,8 @@ const char configForm[] PROGMEM = R"(
   <fieldset>
    <legend>MQTT</legend>  
    <p>
-    <label for="mqtt_host">Host: </label>
-    <input type="text" id="mqtt_host" name="mqtt_host"/>
+    <label for="mqtt_server">Host: </label>
+    <input type="text" id="mqtt_server" name="mqtt_server"/>
    </p>
    <p>
     <label for="mqtt_port">Port: </label>
@@ -24,6 +24,7 @@ const char configForm[] PROGMEM = R"(
   </fieldset>
   <fieldset>   
    <legend><p>I²C Setup</p></legend>
+   <p class="notation">Attention!</p>
    <p>
      <label for="i2c_scl">Pin für scl: </label>
      <input type="text" id="i2c_scl" name="i2c_scl" size="3"/>
@@ -33,7 +34,7 @@ const char configForm[] PROGMEM = R"(
     <input type="text" id="i2c_sda" name="i2c_sda" size="3"/>
    </p>
   </fieldset>
-  <input type="submit" name="action" value="Save"/>
+  <input type="button" value="Save" onclick="setCFG();" />
   <input type="button" value="Load" onclick="getCFG();"/>
  </form>
 )";
