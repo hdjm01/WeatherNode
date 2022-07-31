@@ -8,11 +8,26 @@ const char INDEX[] PROGMEM = R"(
   <title>WeatherNode</title>
   <link rel="stylesheet" type="text/css" href="./main.css">
   <script src="/main.js"></script>
+  <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAERABAAEAEBAQABAQEBABAAEAEQARABAQABAQABAAAQARAAEQARAAAAAAAAAAAAAAAAAAAAAAEREAEQAQAAAQAAEAEBAAABAAAAAQEAAAERAAEQAREAAQAAEAABABABAAAQAQEAEAEREAEQAREAAAAAAAAAAAD//wAA2N0AAKuqAADdmQAArrsAANnMAAD//wAA//8AAIZvAAC9rwAAv68AAI5jAAC97QAAva0AAIZjAAD//wAA" rel="icon" type="image/x-icon" />
  </head>
  
- <body>
+ <body onload="checkStatusRegister();">
   <h1>
    <a href="/">WeatherNode</a>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="16px"
+         height="16px" 
+         viewBox="0 0 16 16">
+
+    <style type="text/css">
+    <![CDATA[
+        .allboxes {fill:#00FF00}
+    ]]>
+    </style>
+    <g class="box-a allboxes" transform="translate(0.24,-0.24) "  fill="#e8eef7">
+        <rect x="0" y="0.48" width="16" height="16" id="status"><title>Box A</title></rect>
+    </g>
+   </svg>
   </h1>
   
   <ul class="navi">
@@ -28,7 +43,7 @@ const char INDEX[] PROGMEM = R"(
     <li><a onclick="getBME();">BME280</a></li>
     <li><a href="/json">JSON</a></li>
     <li><a href="/xml">XML</a></li>
-    <li><a href="/getcfg">COnfig as XML</a></li>
+    <li><a href="/config.xml">config.xml</a></li>
    </ul>
    
   </div>

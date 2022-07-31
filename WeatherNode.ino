@@ -1,21 +1,19 @@
+
+
+
 #include "WeatherNode.h"
 
 
 void setup() {
-  
+  delay(500);
   chipid=ESP.getChipId();
-  
   initSerial();  
+  initFS();
   initWiFi();
-
   initBME();
-
-  // Updateserver
-  httpUpdater.setup(&server, update_path, username, password);
-  Serial.println("HTTPUpdateServer ready!");
-
+  initUpdate();
   initWebserver();
-  initMQTT();
+  initMQTT();  
   
   Serial.println("Setup Done");
 }
@@ -37,7 +35,7 @@ void loop() {
         Serial.println("   BME280");
         Serial.println("   SENSORS");
         Serial.println("   https://github.com/hdjm01/WeatherNode/wiki ");
-    }    
+    }
     
     inputString = "";
     stringComplete = false;
@@ -50,7 +48,10 @@ void loop() {
   }
 
   if(!mqtt_client.connected()) {
+    mqtt_connected == false;
     reconnectMQTT();
+  }else{
+    mqtt_connected == true;
   }
   
   if( mqtt_lastpub == 0 || ( mqtt_lastpub + mqtt_pubtime ) < millis() ){

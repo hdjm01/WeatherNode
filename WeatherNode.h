@@ -1,3 +1,5 @@
+#include <SD.h>
+
 #pragma once
 
 #include "MyWifi.h"
@@ -7,12 +9,5 @@
 #include "I2C.h"
 #include "MyESP.h"
 #include "MySerial.h"
-#include <ESP8266HTTPUpdateServer.h>
-
+#include "Update.h"
 #include "Webserver.h"
-
-
-
-// Update
-ESP8266HTTPUpdateServer httpUpdater;
-const char* update_path = "/firmware";

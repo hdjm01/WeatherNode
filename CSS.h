@@ -53,7 +53,7 @@ const char CSS[] PROGMEM = R"(
     margin:2px;
     margin-left: 145px;
     padding:3px;
-    border:black 1px solid; 
+    /*border:black 1px solid; */
   }
 
   #footer {

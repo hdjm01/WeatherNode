@@ -7,6 +7,7 @@
 #include "CSS.h"
 #include "JavaScript.h"
 #include "Version.h"
+#include "MQTT.h"
 
 ESP8266WebServer server(80);
 
@@ -14,6 +15,7 @@ String getBME280(void);
 void getConfig();
 void handleConfig();
 void handleXML();
+void handleMQTT();
 void handleNotFound();
 void setConfig();
 
@@ -22,7 +24,7 @@ void initWebserver(){
 
   server.on("/", []() { server.send(200, "text/html", INDEX); });  
   
-  //server.on("/test", []() { server.send(200, "text/html", "test"); });  
+  server.on("/test", []() { server.send(200, "text/html", "ok"); });  
   
   server.on("/BME280.json", []() { server.send(200, "application/json", getBME280()); });
   server.on("/json", []() { server.send(200, "application/json", getBME280()); });
@@ -31,8 +33,9 @@ void initWebserver(){
   server.on("/main.css", []() { server.send(200, "text/css", CSS); });  
   
   server.on("/config", handleConfig);  
+  server.on("/mqtt", handleMQTT);  
   
-  server.on("/getcfg", getConfig); // returns xml
+  server.on("/config.xml", getConfig); // returns xml
   server.on("/setcfg", setConfig); // returns 200?
   
   server.on("/xml", handleXML);
@@ -45,6 +48,7 @@ void initWebserver(){
 }
 
 void setConfig(){
+  Serial.println("/setcfg");
   if (!server.authenticate(username, password))
       return server.requestAuthentication();
 
@@ -55,12 +59,11 @@ void setConfig(){
  if(server.hasArg("mqtt_port"))
     mqtt_port = server.arg("mqtt_port").toInt();
 
- /*if(server.hasArg("username"))
+ if(server.hasArg("username"))
     username = server.arg("username").c_str();
       
   if(server.hasArg("password") && server.arg("password") != "")
     password = server.arg("password").c_str();
-*/
 
   if(server.hasArg("i2c_scl"))
     scl = server.arg("i2c_scl").toInt();
@@ -72,11 +75,16 @@ void setConfig(){
 }
 
 void getConfig(){
+  Serial.println("/getcfg");
   if (!server.authenticate(username, password))
       return server.requestAuthentication();
 
   String message = "<?xml version=\"1.0\"?>"
     "<cfg>";
+
+  message += "<param id='mqtt_lient'>";
+  message += mqtt_server.toString();
+  message += "</param>";
 
   message += "<param id='mqtt_server'>";
   message += mqtt_server.toString();
@@ -90,11 +98,11 @@ void getConfig(){
   message += username;
   message += "</param>";
 
-  message += "<param id='scl_pin'>";
+  message += "<param id='i2c_scl'>";
   message += scl;
   message += "</param>";
 
-  message += "<param id='sda_pin'>";
+  message += "<param id='i2c_sda'>";
   message += sda;
   message += "</param>";
  
@@ -106,6 +114,15 @@ void handleConfig(){
   if (!server.authenticate(username, password))
       return server.requestAuthentication();     
   server.send(200, "text/html", configForm);
+}
+
+void handleMQTT(){
+  if(!mqtt_connected){
+    server.send(503, "text/html", "error");  
+  }else{
+    server.send(200, "text/html", "ok");  
+  }
+  
 }
 
 void handleNotFound() {
@@ -127,40 +144,40 @@ void handleNotFound() {
 
 
 String getBME280(void) {
-    String json = "{ "
-    "\"name\" : \"WeatherNode\", "
+    String json = "{\n"
+    " \"name\" : \"WeatherNode\",\n"
     
-    "\"id\" : \"";
+    " \"id\" : \"";
     json += ESP.getChipId();
-    json += "\", "
+    json += "\",\n"
 
-    "\"version\" : \"";
+    " \"version\" : \"";
     json += version;
-    json += "\", "
+    json += "\",\n"
 
-    " \"BME280\" : {"
+    " \"BME280\" : {\n"
 
-    " \"Temperatur\": { ";
-    json += "\"value\" : \"" + String(temp) + "\"";
-    json += ", \"unit\" : "
+    "  \"Temperatur\":   {";
+    json += " \"value\" : \"" + String(temp) + "\"";
+    json += ",  \"unit\" : "
     "\"°C\""
-    " }";
+    " },\n";
     
-    json += ", \"Luftfeuchte\" : { "
-    "\" value\" : ";
+    json += "  \"Luftfeuchte\" : {"
+    " \"value\" : ";
     json += "\"" + String(hum) + "\"";    
-    json += ", \"unit\" : "
+    json += ",  \"unit\" : "
     "\"%\""
-    " }"
+    " },\n"
     
-    ", \"Luftdruck\" : { "
+    "  \"Luftdruck\" :   {"
     " \"value\" : ";
     json += "\"" + String(pres / 100) + "\"";    
     json += ", \"unit\" : "
     "\"hPa\""
-    " }"
-    " }"    
-    " }";
+    " }\n"
+    "  }\n"
+    "}";
     return json;
 }
 

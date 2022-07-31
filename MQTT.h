@@ -11,6 +11,7 @@ IPAddress     mqtt_server(192, 168, 178, 24);
 PubSubClient  mqtt_client(wclient);
 int           mqtt_port                 = 1883;
 bool          mqtt_connected            = false;
+bool          enabled                   = true;
 int           mqtt_pubtime              = 60 * 1000 * 5;
 int           reconnectMQTT_TRY         = 3;
 unsigned long lastReconnectMQTT         = 0;
@@ -23,15 +24,22 @@ char          clientid[25];
 String getBME280(void);
 
 void initMQTT(){
-  
+  if(!enabled)
+   return;
+   
   snprintf(clientid,25,"ESP-%08X",chipid);
+  
   Serial.print("Set mqtt server: ");
   Serial.print(mqtt_server);
   Serial.print(" on port ");
   Serial.println(mqtt_port);
+  
   mqtt_client.setServer(mqtt_server, mqtt_port);
+  
   Serial.println("start mqtt client");
+  
   mqtt_client.connect(clientid);  
+  
 }
 
 void  publischBME280(void) {
@@ -62,9 +70,10 @@ void  publischBME280(void) {
 void reconnectMQTT(){
   
   if(mqtt_client.connected()) {
+    mqtt_connected == true;
     return;
   }else{
-        
+     mqtt_connected == false;   
     // Wartezeit einhalten
     if (millis() - lastReconnectMQTT >= reconnectMQTTTime){
       
@@ -78,6 +87,7 @@ void reconnectMQTT(){
       if(mqtt_client.connect(clientid)){
         //Serial.println("connected");
         reconnectMQTT_TRY = 0; // Anzahl der Versuche zürück setzen
+        
         return;
       }else{
         delay(100);
@@ -111,7 +121,7 @@ void reconnectMQTT(){
         Serial.print("failed, rc=");
         Serial.println(mqtt_client.state()); 
       }
-        
+       
       lastReconnectMQTT = millis();
     }  
     
