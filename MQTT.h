@@ -1,7 +1,6 @@
 #pragma once
 
 #include "MyWifi.h"
-#include "MyESP.h"
 #include "BME280.h"
 
 #include <PubSubClient.h>
@@ -27,7 +26,7 @@ void initMQTT(){
   if(!enabled)
    return;
    
-  snprintf(clientid,25,"ESP-%08X",chipid);
+  snprintf(clientid,25,"ESP-%08X",ESP.getChipId());
   
   Serial.print("Set mqtt server: ");
   Serial.print(mqtt_server);
@@ -49,19 +48,19 @@ void  publischBME280(void) {
     static char outstr[15];
     char topic[80];
     
-    sprintf(topic,"/WeaterNode/ESP-%06X/temp",chipid);
+    sprintf(topic,"/WeaterNode/ESP-%06X/temp",ESP.getChipId());
     dtostrf(temp,7, 1, outstr);
     mqtt_client.publish(topic, outstr);
 
-    sprintf(topic,"/WeaterNode/ESP-%06X/hum",chipid);
+    sprintf(topic,"/WeaterNode/ESP-%06X/hum",ESP.getChipId());
     dtostrf(hum,7, 0, outstr);
     mqtt_client.publish(topic, outstr);
     
-    sprintf(topic,"/WeaterNode/ESP-%06X/pres",chipid);
+    sprintf(topic,"/WeaterNode/ESP-%06X/pres",ESP.getChipId());
     dtostrf(pres / 100,7, 1, outstr);
     mqtt_client.publish(topic, outstr);    
 
-    sprintf(topic,"/WeaterNode/ESP-%06X/data",chipid);
+    sprintf(topic,"/WeaterNode/ESP-%06X/data",ESP.getChipId());
     mqtt_client.publish(topic, getBME280().c_str());    
 }
 

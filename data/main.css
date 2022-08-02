@@ -1,6 +1,3 @@
-#pragma once
-
-const char CSS[] PROGMEM = R"(
 * { 
     font-family: Arial, Helvetica;
   }
@@ -68,4 +65,4 @@ const char CSS[] PROGMEM = R"(
     width: 120;
     display: inline-block;
   }
-)";
+  

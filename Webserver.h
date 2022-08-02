@@ -1,13 +1,10 @@
 #pragma once
 
 #include <ESP8266WebServer.h>
-#include "Index.h"
-#include "configForm.h"
 #include "User.h"
-#include "CSS.h"
-#include "JavaScript.h"
 #include "Version.h"
 #include "MQTT.h"
+
 
 ESP8266WebServer server(80);
 
@@ -20,18 +17,15 @@ void handleNotFound();
 void setConfig();
 
 void initWebserver(){
-  // Webserver
-
-  server.on("/", []() { server.send(200, "text/html", INDEX); });  
   
-  server.on("/test", []() { server.send(200, "text/html", "ok"); });  
+  server.on("/", []() { server.send(200, "text/html", readFile("WeatherNode.html")); });  
   
+  server.on("/main.js", []() { server.send(200, "text/javascript", readFile("main.js")); });  
+  server.on("/main.css", []() { server.send(200, "text/css", readFile("main.css")); });  
+    
   server.on("/BME280.json", []() { server.send(200, "application/json", getBME280()); });
   server.on("/json", []() { server.send(200, "application/json", getBME280()); });
-  
-  server.on("/main.js", []() { server.send(200, "text/javascript", JS); });  
-  server.on("/main.css", []() { server.send(200, "text/css", CSS); });  
-  
+    
   server.on("/config", handleConfig);  
   server.on("/mqtt", handleMQTT);  
   
@@ -39,6 +33,8 @@ void initWebserver(){
   server.on("/setcfg", setConfig); // returns 200?
   
   server.on("/xml", handleXML);
+
+  server.on("/test", []() { server.send(200, "text/html", "ok"); });  
   
   server.onNotFound(handleNotFound);
   
@@ -110,10 +106,14 @@ void getConfig(){
   server.send(200, "text/xml", message);
 }
 
+
 void handleConfig(){
+  
   if (!server.authenticate(username, password))
       return server.requestAuthentication();     
-  server.send(200, "text/html", configForm);
+      
+  server.send(200, "text/html", readFile("ConfigForm.html"));
+  
 }
 
 void handleMQTT(){
