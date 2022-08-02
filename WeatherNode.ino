@@ -1,12 +1,9 @@
 
-
-
 #include "WeatherNode.h"
 
 
 void setup() {
   delay(500);
-  chipid=ESP.getChipId();
   initSerial();  
   initFS();
   initWiFi();

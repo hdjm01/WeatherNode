@@ -4,6 +4,8 @@
 
 const char cfgFileName[] = "WeatherNode.cfg";
 
+bool readCFGFile();
+
 void initFS(){
 
   Serial.println(F("Inizializing FS..."));
@@ -61,14 +63,46 @@ void initFS(){
             Serial.println("0");
         }
     }
-  if(LittleFS.exists(path)){
+  if(LittleFS.exists(cfgFileName)){
     Serial.println("Found configuration file");   
   }
+  readCFGFile();
 }
 
 bool readCFGFile(){
-  LittleFS.open(path, "r");
-  File f = dir.openFile("r");
-            Serial.println(f.size());
-            f.close();
+  File file = LittleFS.open(cfgFileName, "r");
+  if (!file) {
+    Serial.println("Failed to open data file");
+    return false;
+  }
+
+  size_t size = file.size();
+  if (size > 1024) {
+    Serial.println("Data file size is too large");
+    return false;
+  }
+  while(file.available()){
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+String readFile(String filename){
+  String s;
+  File file = LittleFS.open(filename, "r");
+  if (!file) {
+    Serial.println("Failed to open data file");
+    return "";
+  }
+
+  size_t size = file.size();
+  /*if (size > 1024) {
+    Serial.println("Data file size is too large");
+    return "";
+  }*/
+  while(file.available()){
+    s += file.readString();
+  }
+  file.close();  
+  return s;
 }
