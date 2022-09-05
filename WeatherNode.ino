@@ -55,7 +55,5 @@ void loop() {
      publischBME280();
      mqtt_lastpub = millis();
   }
-
-  
   
 }

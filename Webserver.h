@@ -4,7 +4,7 @@
 #include "User.h"
 #include "Version.h"
 #include "MQTT.h"
-
+#include "FileSystem.h"
 
 ESP8266WebServer server(80);
 
@@ -45,61 +45,87 @@ void initWebserver(){
 
 void setConfig(){
   Serial.println("/setcfg");
+  
   if (!server.authenticate(username, password))
       return server.requestAuthentication();
 
-  if(server.hasArg("mqtt_server")){
-    mqtt_server.fromString(server.arg("mqtt_server"));
+  /*if(server.hasArg("mqtt_client")){
+    const String value = server.arg("mqtt_client");
+    doc["mqtt_client"] = value;
   }
 
- if(server.hasArg("mqtt_port"))
-    mqtt_port = server.arg("mqtt_port").toInt();
+  if(server.hasArg("mqtt_server")){
+    doc["mqtt_server"] = server.arg("mqtt_server");
+  }
 
- if(server.hasArg("username"))
-    username = server.arg("username").c_str();
+  if(server.hasArg("mqtt_enable")){
+    doc["mqtt_enable"] = server.arg("mqtt_enable");
+  }
+
+ if(server.hasArg("mqtt_port")){
+    const String port = server.arg("mqtt_port");
+    mqtt_port = port.toInt();
+    doc["mqtt_port"] = port;
+ }
+
+ if(server.hasArg("mqtt_topic")){
+    doc["mqtt_topic"] = server.arg("mqtt_topic");
+  }
+
+ if(server.hasArg("username")){
+    doc["username"] = server.arg("username");
+ }
       
-  if(server.hasArg("password") && server.arg("password") != "")
-    password = server.arg("password").c_str();
+  if(server.hasArg("password") && server.arg("password") != ""){
+    //password = server.arg("password").c_str();
+    doc["password"] = server.arg("password");
+  }
 
-  if(server.hasArg("i2c_scl"))
-    scl = server.arg("i2c_scl").toInt();
+  if(server.hasArg("i2c_scl")){
+    //scl = server.arg("i2c_scl").toInt();
+    doc["i2c_scl"] = server.arg("i2c_scl");
+  }
 
-  if(server.hasArg("i2c_sda"))
-    sda = server.arg("i2c_sda").toInt();
+  if(server.hasArg("i2c_sda")){
+    //sda = server.arg("i2c_sda").toInt();
+    doc["i2c_sda"] = server.arg("i2c_sda");
+  }*/
+
+  saveCfgJson();
     
   server.send(200, "text/plain", "ok");
 }
 
 void getConfig(){
-  Serial.println("/getcfg");
+  
   if (!server.authenticate(username, password))
       return server.requestAuthentication();
 
   String message = "<?xml version=\"1.0\"?>"
     "<cfg>";
 
-  message += "<param id='mqtt_lient'>";
-  message += mqtt_server.toString();
+  message += "<param id='mqtt_client'>";
+  message += doc["mqtt_client"];
   message += "</param>";
 
   message += "<param id='mqtt_server'>";
-  message += mqtt_server.toString();
+  message += String(doc["mqtt_server"]);
   message += "</param>";
 
   message += "<param id='mqtt_port'>";
-  message += mqtt_port;
+  message += String(doc["mqtt_port"]);
   message += "</param>";
 
   message += "<param id='username'>";
-  message += username;
+  message += String(doc["username"]);
   message += "</param>";
 
   message += "<param id='i2c_scl'>";
-  message += scl;
+  message += String(doc["i2c_scl"]);
   message += "</param>";
 
   message += "<param id='i2c_sda'>";
-  message += sda;
+  message += String(doc["i2c_sda"]);
   message += "</param>";
  
   message += "</cfg>";
