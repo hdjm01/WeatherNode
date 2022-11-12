@@ -21,3 +21,6 @@ jobs:
 
       - name: Install Arduino
         run: sudo apt-get install -y arduino
+
+      - name: build
+        run: arduino-builder -fqbn archlinux-arduino:avr:uno -hardware /usr/share/arduino/hardware -tools /usr/bin WeatherNode.ino
