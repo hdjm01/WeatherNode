@@ -3,6 +3,9 @@ name: Main CI for Weathernode
 on:
   push:
     branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,6 +24,9 @@ jobs:
 
       - name: Install Arduino
         run: sudo apt-get install -y arduino
+
+      - name: Install Arduino Builder
+        run: sudo apt-get install -y arduino-builder
 
       - name: build
         run: arduino-builder -fqbn archlinux-arduino:avr:uno -hardware /usr/share/arduino/hardware -tools /usr/bin WeatherNode.ino
