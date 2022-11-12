@@ -1,6 +1,6 @@
+<!-- Filename ConfigForm.html -->
 <form method="post">
- 
-  <fieldset>
+   <fieldset>
    <legend>MQTT</legend>  
    <p>
     <label for="mqtt_topic">Topic: </label>
@@ -47,22 +47,7 @@
     <input type="password" id="update_pw" name="update_pw" size="16"  />
    </p>
   </fieldset>
-  <fieldset>   
-   <legend><p>I²C Setup</p></legend>
-   <p class="notation">Attention!</p>
-   <p>
-     <label for="i2c_scl">scl Pin: </label>
-     <input type="number" id="i2c_scl" name="i2c_scl" size="3"  min="3" max="16"/>
-   </p>  
-   <p>
-    <label for="i2c_sda">sda Pin: </label>
-    <input type="number" id="i2c_sda" name="i2c_sda" size="3" min="3" max="16"/>
-   </p>
-   <p>
-    <label for="i2c_enabled">Enable: </label>
-    <input type="checkbox" id="i2c_enabled" name="i2c_enabled"/>
-   </p>
-  </fieldset>
+  <!-- I2C Setup removed -->
   <div>
    <input type="button" value="Save" onclick="setCFG();" />
   <div>

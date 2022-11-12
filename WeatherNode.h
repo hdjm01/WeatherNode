@@ -10,3 +10,6 @@
 #include "MySerial.h"
 #include "Update.h"
 #include "Webserver.h"
+
+char chip_id[32] = ""; // 4294967296 is the maximum for Uint32, so 10 characters it is
+sprintf(chip_id, "ESP-%d", (long) ESP.getChipId());

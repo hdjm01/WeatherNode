@@ -1,6 +1,6 @@
-
 #include "WeatherNode.h"
 
+MQTTManager mqtt_manager();
 
 void setup() {
   delay(500);
@@ -10,7 +10,9 @@ void setup() {
   initBME();
   initUpdate();
   initWebserver();
-  initMQTT();  
+
+  mqtt_manager.init();
+  //initMQTT();  
   
   Serial.println("Setup Done");
 }
@@ -44,16 +46,11 @@ void loop() {
     bme.read(pres, temp, hum, tempUnit, presUnit);
   }
 
-  if(!mqtt_client.connected()) {
-    mqtt_connected == false;
-    reconnectMQTT();
-  }else{
-    mqtt_connected == true;
-  }
-  
-  if( mqtt_lastpub == 0 || ( mqtt_lastpub + mqtt_pubtime ) < millis() ){
-     publischBME280();
-     mqtt_lastpub = millis();
+  if( mqtt_manager.lastpub == 0 || ( mqtt_manager.lastpub + mqtt_manager.pubtime ) < millis() ){
+    if(mqtt_manager.checkConnection()){
+      mqtt_manager.publischBME280();
+      mqtt_manager.lastpub = millis();
+    }
   }
   
 }

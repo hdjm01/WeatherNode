@@ -5,100 +5,127 @@
 
 #include <PubSubClient.h>
 
-const char* MQTTClientName   = "ESp-"+ESP.getChipId();
-IPAddress     mqtt_server(192, 168, 178, 24);
-PubSubClient  mqtt_client(wclient);
-int           mqtt_port                 = 1883;
-bool          mqtt_connected            = false;
-bool          enabled                   = true;
-int           mqtt_pubtime              = 60 * 1000 * 5;
-int           reconnectMQTT_TRY         = 3;
-unsigned long lastReconnectMQTT         = 0;
-int           reconnectMQTTTime         = 10000;
-int           reconnectMQTT_MAX_TRY     = 100;
+extern const char * chip_id;
 
-long          mqtt_lastpub = 0;
-char          clientid[25];
+class MQTTManager {
+  private:
+   const char* ClientName   = strcat("WeatherNode ",chip_id);  
+   IPAddress     server;
+   PubSubClient  client;
+   int           port       = 1883;
+   bool          connected  = false;
+   bool          enabled    = true;
+   char          id[25];
+   int           reconnectTime      = 10000;
+   int           reconnect_MAX_TRY  = 100;
+   int           pubtime            = 60 * 1000 * 5;
+   unsigned long lastReconnect      = 0;
+   int           reconnect_TRY  = 3;
+   long          lastpub       = 0;
+  public:
+   void init();
+   void reconnect();
+   void publish();
+   bool checkConnection();
+   void publish(char topic, char value);
+   void publischBME280(void);
+};
 
-String getBME280(void);
-
-void initMQTT(){
+void MQTTManager::init(){
+  this->server = IPAddress(192, 168, 178, 24); 
+  client = wclient;
   if(!enabled)
    return;
    
-  snprintf(clientid,25,"ESP-%08X",ESP.getChipId());
   
   Serial.print("Set mqtt server: ");
-  Serial.print(mqtt_server);
+  Serial.print(server);
   Serial.print(" on port ");
-  Serial.println(mqtt_port);
+  Serial.println(port);
   
-  mqtt_client.setServer(mqtt_server, mqtt_port);
+  this->client.setServer(this->server, this->port);
   
   Serial.println("start mqtt client");
   
-  mqtt_client.connect(clientid);  
+  this->client.connect(this->ClientName);  
   
 }
 
-void  publischBME280(void) {
+bool MQTTManager::checkConnection(){
+  // MQTT ++++++++++++
+  if(!this->client.connected()) {
+    this->connected == false;
+    this->reconnect();
+  }else{
+    this->connected == true;
+    return true;
+  }
+}
+
+void  MQTTManager::publish(char topic, char value) {
+  this->client.publish(topic, value);
+}
+
+// ToDO refact.
+void  MQTTManager::publischBME280(void) {
   
     Serial.println("MQTT Publish");
     
-    static char outstr[15];
+    char outstr[15];
     char topic[80];
     
-    sprintf(topic,"/WeaterNode/ESP-%06X/temp",ESP.getChipId());
+    sprintf(topic,"/WeaterNode/ESP-%06X/temp",chip_id);
     dtostrf(temp,7, 1, outstr);
-    mqtt_client.publish(topic, outstr);
+    this->client.publish(topic, outstr);
 
-    sprintf(topic,"/WeaterNode/ESP-%06X/hum",ESP.getChipId());
+    sprintf(topic,"/WeaterNode/ESP-%06X/hum",chip_id);
     dtostrf(hum,7, 0, outstr);
-    mqtt_client.publish(topic, outstr);
+    this->client.publish(topic, outstr);
     
-    sprintf(topic,"/WeaterNode/ESP-%06X/pres",ESP.getChipId());
+    sprintf(topic,"/WeaterNode/ESP-%06X/pres",chip_id);
     dtostrf(pres / 100,7, 1, outstr);
-    mqtt_client.publish(topic, outstr);    
+    this->client.publish(topic, outstr);    
 
-    sprintf(topic,"/WeaterNode/ESP-%06X/data",ESP.getChipId());
-    mqtt_client.publish(topic, getBME280().c_str());    
+    sprintf(topic,"/WeaterNode/ESP-%06X/data",chip_id);
+    //this->client.publish(topic, getBME280().c_str());    
 }
 
 
 
-void reconnectMQTT(){
+bool MQTTManager::reconnect(){
   
-  if(mqtt_client.connected()) {
-    mqtt_connected == true;
-    return;
+  if(this.client.connected()) {
+    this->connected == true;
+    return true;
   }else{
-     mqtt_connected == false;   
+     this->connected == false;   
+     
     // Wartezeit einhalten
-    if (millis() - lastReconnectMQTT >= reconnectMQTTTime){
+    if (millis() - this->lastReconnect >= this->reconnectTime){
       
       /*
-      Serial.print("(re)connect MQTT " + String(mqtt_server.toString()) + ":" + String(mqtt_port));        
+      Serial.print("(re)connect MQTT " + String(this.server.toString()) + ":" + String(this.port));        
       Serial.print(", Client ID");
       Serial.print(clientid); 
       Serial.print(" "); 
       */
       
-      if(mqtt_client.connect(clientid)){
+      if(this->client.connect(clientid)){
         //Serial.println("connected");
-        reconnectMQTT_TRY = 0; // Anzahl der Versuche zürück setzen
+        this.reconnect_TRY = 0; // Anzahl der Versuche zürück setzen
         
         return;
       }else{
         delay(100);
         //Serial.print("not connected : ");
-        //Serial.println(mqtt_client.state());
+        //Serial.println(this.client.state());
 
         // Loop until we're reconnected or reach max
         int con = 0;
-        while (!mqtt_client.connected() and con <= (reconnectMQTT_TRY - 1) ) {
+        while (!this->client.connected() and con <= (this->reconnect_TRY - 1) ) {
           Serial.print("."); 
           // Attempt to connect
-          if (mqtt_client.connect(clientid)) {
+          if (this->client.connect(clientid)) {
             //Serial.println(" connected");
             delay(100);
             return;
@@ -106,7 +133,7 @@ void reconnectMQTT(){
       
             /*
              Serial.print("failed, rc=");
-            Serial.print(mqtt_client.state());     
+            Serial.print(this.client.state());     
             
             Serial.print(" try again in ");
             Serial.print(reconnectMQTTTime / 1000);
@@ -118,7 +145,8 @@ void reconnectMQTT(){
           }
         }
         Serial.print("failed, rc=");
-        Serial.println(mqtt_client.state()); 
+        Serial.println(this.client.state()); 
+        return false;
       }
        
       lastReconnectMQTT = millis();

@@ -16,6 +16,8 @@ void handleMQTT();
 void handleNotFound();
 void setConfig();
 
+extern const char * chip_id;
+
 void initWebserver(){
   
   server.on("/", []() { server.send(200, "text/html", readFile("WeatherNode.html")); });  
@@ -174,7 +176,7 @@ String getBME280(void) {
     " \"name\" : \"WeatherNode\",\n"
     
     " \"id\" : \"";
-    json += ESP.getChipId();
+    json += chip_id;
     json += "\",\n"
 
     " \"version\" : \"";
