@@ -1,10 +1,13 @@
 #pragma once
 
 #include <LittleFS.h>
-
+#include <ArduinoJson.h>
 const char cfgFileName[] = "WeatherNode.cfg";
+StaticJsonDocument<500> doc;
 
 bool readCFGFile();
+bool getCFG();
+
 
 void initFS(){
 
@@ -70,26 +73,33 @@ void initFS(){
 }
 
 bool readCFGFile(){
+  
   File file = LittleFS.open(cfgFileName, "r");
+  
   if (!file) {
-    Serial.println("Failed to open data file");
+    Serial.println("Failed to open data file");    
     return false;
   }
-
-  size_t size = file.size();
-  if (size > 1024) {
-    Serial.println("Data file size is too large");
+    
+  DeserializationError error = deserializeJson(doc, file);
+  
+  if (error){
+    Serial.println(F("Failed to read file, using default configuration"));
     return false;
   }
-  while(file.available()){
-    Serial.write(file.read());
-  }
-  file.close();
+  
+  file.close();  
+  
+  return true;
+  
 }
 
 String readFile(String filename){
+  
   String s;
+  
   File file = LittleFS.open(filename, "r");
+  
   if (!file) {
     Serial.println("Failed to open data file");
     return "";
@@ -100,9 +110,34 @@ String readFile(String filename){
     Serial.println("Data file size is too large");
     return "";
   }*/
+  
   while(file.available()){
     s += file.readString();
   }
+  
   file.close();  
+  
   return s;
+}
+
+const char* getCFG(String var){
+  return doc[var];
+}
+
+void saveCfgJson(){
+
+  LittleFS.remove(cfgFileName);
+
+  File file = LittleFS.open(cfgFileName, "w");
+  if (!file) {
+    Serial.println(F("Failed to create file"));
+    return;
+  }
+
+  if (serializeJson(doc, file) == 0) {
+    Serial.println(F("Failed to write to file"));
+  }
+
+  // Close the file
+  file.close();
 }
