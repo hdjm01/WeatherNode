@@ -77,6 +77,7 @@ bool readCFGFile(){
   }
 
   size_t size = file.size();
+  
   if (size > 1024) {
     Serial.println("Data file size is too large");
     return false;
@@ -84,7 +85,9 @@ bool readCFGFile(){
   while(file.available()){
     Serial.write(file.read());
   }
+  
   file.close();
+  return true;
 }
 
 String readFile(String filename){
@@ -95,11 +98,13 @@ String readFile(String filename){
     return "";
   }
 
+  /*
   size_t size = file.size();
-  /*if (size > 1024) {
+  if (size > 1024) {
     Serial.println("Data file size is too large");
     return "";
   }*/
+
   while(file.available()){
     s += file.readString();
   }
