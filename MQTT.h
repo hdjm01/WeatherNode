@@ -28,15 +28,11 @@ void initMQTT(){
    
   snprintf(clientid,25,"ESP-%08X",ESP.getChipId());
   
-  Serial.print("Set mqtt server: ");
-  Serial.print(mqtt_server);
-  Serial.print(" on port ");
-  Serial.println(mqtt_port);
+  Serial.printf("Set mqtt [server:port] %s:%d\n", mqtt_server.toString().c_str(), mqtt_port);  
   
   mqtt_client.setServer(mqtt_server, mqtt_port);
   
-  Serial.println("start mqtt client");
-  
+  Serial.println("start mqtt client");  
   mqtt_client.connect(clientid);  
   
 }
@@ -76,17 +72,11 @@ void reconnectMQTT(){
     // Wartezeit einhalten
     if ( (int) (millis() - lastReconnectMQTT) >= reconnectMQTTTime){
       
-      /*
-      Serial.print("(re)connect MQTT " + String(mqtt_server.toString()) + ":" + String(mqtt_port));        
-      Serial.print(", Client ID");
-      Serial.print(clientid); 
-      Serial.print(" "); 
-      */
+      Serial.printf("(re)connect MQTT %s:%d with Client-ID %s\n", mqtt_server.toString().c_str(), mqtt_port, clientid); 
       
       if(mqtt_client.connect(clientid)){
         //Serial.println("connected");
-        reconnectMQTT_TRY = 0; // Anzahl der Versuche zürück setzen
-        
+        reconnectMQTT_TRY = 0;        
         return;
       }else{
         delay(100);
