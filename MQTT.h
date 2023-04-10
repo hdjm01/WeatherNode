@@ -6,7 +6,7 @@
 #include <PubSubClient.h>
 
 const char* MQTTClientName   = "ESp-"+ESP.getChipId();
-IPAddress     mqtt_server(192, 168, 178, 24);
+IPAddress     mqtt_server(192, 168, 178, 100);
 PubSubClient  mqtt_client(wclient);
 int           mqtt_port                 = 1883;
 bool          mqtt_connected            = false;
@@ -69,12 +69,12 @@ void  publischBME280(void) {
 void reconnectMQTT(){
   
   if(mqtt_client.connected()) {
-    mqtt_connected == true;
+    mqtt_connected = true;
     return;
   }else{
-     mqtt_connected == false;   
+     mqtt_connected = false;   
     // Wartezeit einhalten
-    if (millis() - lastReconnectMQTT >= reconnectMQTTTime){
+    if ( (int) (millis() - lastReconnectMQTT) >= reconnectMQTTTime){
       
       /*
       Serial.print("(re)connect MQTT " + String(mqtt_server.toString()) + ":" + String(mqtt_port));        

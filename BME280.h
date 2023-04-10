@@ -21,9 +21,10 @@ BME280I2C::Settings settings(
 BME280I2C bme(settings);
 
 float temp(NAN), hum(NAN), pres(NAN);
-int   maxTryBME        = 10;       // Maximale Versuche f�r die Verbindung zum BM[E|P]
-long  timeSinceLastBM  = 0;
-int   BM_DURATION      = 3000;     // Abstand zwischen Messungen am Sensor in ms
+
+int                 maxTryBME        = 10;       // Maximale Versuche für die Verbindung zum BM[E|P]
+long                timeSinceLastBM  = 0;
+long unsigned int   BM_DURATION      = 3000;     // Abstand zwischen Messungen am Sensor in ms
 
 void initBME(){
   Wire.begin(sda,scl);

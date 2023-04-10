@@ -39,19 +39,21 @@ void loop() {
   }  
 
   // Read Sensor
-  if (timeSinceLastBM == 0 || (millis() - timeSinceLastBM > BM_DURATION)) {
+  if ( timeSinceLastBM == 0 
+  || ( millis() - timeSinceLastBM > BM_DURATION)
+   ) {
     timeSinceLastBM = millis();
     bme.read(pres, temp, hum, tempUnit, presUnit);
   }
 
   if(!mqtt_client.connected()) {
-    mqtt_connected == false;
+    mqtt_connected = false;
     reconnectMQTT();
   }else{
-    mqtt_connected == true;
+    mqtt_connected = true;
   }
   
-  if( mqtt_lastpub == 0 || ( mqtt_lastpub + mqtt_pubtime ) < millis() ){
+  if( mqtt_lastpub == 0 || (unsigned long) ( mqtt_lastpub + mqtt_pubtime ) < millis() ){
      publischBME280();
      mqtt_lastpub = millis();
   }

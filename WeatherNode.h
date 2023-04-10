@@ -1,5 +1,3 @@
-#include <SD.h>
-
 #pragma once
 
 #include "MyWifi.h"
