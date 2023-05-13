@@ -1,10 +1,11 @@
 #pragma once
 
 #include <ESP8266WebServer.h>
-#include "User.h"
 #include "Version.h"
 #include "MQTT.h"
 
+const char* username = "fadmin";
+const char* password = "elefantenloeffel";
 
 ESP8266WebServer server(80);
 
@@ -122,7 +123,6 @@ void handleMQTT(){
   }else{
     server.send(200, "text/html", "ok");  
   }
-  
 }
 
 void handleNotFound() {

@@ -9,3 +9,5 @@
 #include "MySerial.h"
 #include "Update.h"
 #include "Webserver.h"
+
+const char* version = "1.0.3";
